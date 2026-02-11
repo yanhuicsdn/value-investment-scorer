@@ -78,3 +78,43 @@ model ScoringResult {
 
   @@index([userId, createdAt])
 }
+
+// 股票数据缓存表 - 保存从 Yahoo Finance 抓取的原始数据
+model StockData {
+  id              String   @id @default(cuid())
+  stockCode       String   @unique
+  stockName       String
+  stockPrice      Float
+  marketCap       Float
+  totalShares     Float
+  peRatio         Float
+  pbRatio         Float
+  revenue         Float
+  netIncome       Float
+  ebit            Float
+  operatingCashFlow Float
+  totalAssets     Float
+  totalLiabilities Float
+  currentAssets   Float
+  currentLiabilities Float
+  cashEquivalents Float
+  totalDebt       Float
+  investedCapital Float
+  roe             Float
+  equityMultiplier Float
+  dividendsPaid   Float
+  goodwill        Float
+  intangibleAssets Float
+  accountsReceivable Float
+  adjustedNetIncome Float
+  // 原始 JSON 数据（包含所有字段）
+  rawData         String   // JSON string
+  // 数据来源
+  dataSource      String   @default("yahoo") // yahoo, mock
+  // 数据更新时间
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+
+  @@index([stockCode])
+  @@index([updatedAt])
+}

@@ -17,6 +17,9 @@ interface ScoringResultsProps {
 }
 
 export default function ScoringResults({ results }: ScoringResultsProps) {
+  // 添加调试日志
+  console.log('🎯 ScoringResults 组件渲染，收到结果数量:', results?.length || 0);
+
   const getScoreColor = (scoreRatio: number) => {
     if (scoreRatio >= 0.77) return "text-green-600";
     if (scoreRatio >= 0.62) return "text-blue-600";

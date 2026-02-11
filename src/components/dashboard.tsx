@@ -25,28 +25,40 @@ export default function Dashboard() {
   };
 
   const handleStocksAdd = async (stocks: any[]) => {
+    console.log('📥 handleStocksAdd 被调用，收到股票数量:', stocks.length);
+
     // 添加到股票列表
     setStockList((prev) => [...prev, ...stocks]);
 
     // 自动评分
     const results = scorer.calculateAllStocks(stocks, useMlWeights);
+    console.log('📊 计算完成，结果数量:', results.length);
 
-    // 如果已经有评分结果，合并结果
-    if (scoringResults) {
-      const mergedResults = {
-        ...scoringResults,
-        results: [...scoringResults.results, ...results].sort(
-          (a, b) => b.displayScore - a.displayScore
-        ),
-        count: (scoringResults.count || 0) + results.length,
-      };
-      setScoringResults(mergedResults);
-    } else {
-      setScoringResults({
-        count: results.length,
-        results: results.sort((a, b) => b.displayScore - a.displayScore),
-      });
-    }
+    // 使用函数式状态更新，确保总是基于最新状态
+    setScoringResults((prevScoringResults) => {
+      const currentCount = prevScoringResults?.results?.length || 0;
+      console.log('📊 当前已保存的评分结果数量:', currentCount);
+
+      // 如果已经有评分结果，合并结果
+      if (prevScoringResults && prevScoringResults.results && prevScoringResults.results.length > 0) {
+        const mergedResults = {
+          ...prevScoringResults,
+          results: [...prevScoringResults.results, ...results].sort(
+            (a, b) => b.displayScore - a.displayScore
+          ),
+          count: (prevScoringResults.count || 0) + results.length,
+        };
+        console.log('🔀 合并后总结果数量:', mergedResults.results.length);
+        return mergedResults;
+      } else {
+        const newResults = {
+          count: results.length,
+          results: results.sort((a, b) => b.displayScore - a.displayScore),
+        };
+        console.log('✨ 创建新的评分结果，数量:', newResults.results.length);
+        return newResults;
+      }
+    });
 
     // 提示用户切换到结果页面
     setTimeout(() => {
